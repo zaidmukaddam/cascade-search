@@ -49,7 +49,9 @@ test('WGSL batch path matches the TS path', async context => {
   if (process.env.SKIP_GPU) return context.skip()
   const { create, globals } = await import('webgpu')
   Object.assign(globalThis, globals)
-  const gpu = await createGpu(weights, create([]))
+  const instance = create([])
+  Object.assign(globalThis, { dawnInstance: instance })
+  const gpu = await createGpu(weights, instance)
   if (!gpu) {
     if (process.env.REQUIRE_GPU) throw new Error('no WebGPU adapter')
     return context.skip()

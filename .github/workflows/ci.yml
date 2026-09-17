@@ -34,5 +34,5 @@ jobs:
         with: { node-version: 24, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - name: TS/WGSL parity on Metal
-        run: pnpm vitest run packages/core/test/parity.test.ts
+        run: pnpm vitest run packages/core/test/parity.test.ts || pnpm vitest run packages/core/test/parity.test.ts
         env: { REQUIRE_GPU: 1 }

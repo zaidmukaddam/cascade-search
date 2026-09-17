@@ -65,7 +65,6 @@ export function Field() {
       ref={canvas}
       width={COLUMNS}
       height={ROWS}
-      aria-hidden="true"
       className="pointer-events-none fixed inset-0 -z-10 h-full w-full scale-125 blur-[60px]"
     />
   )
