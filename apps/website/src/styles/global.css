@@ -155,7 +155,7 @@
 .dark {
   color-scheme: dark;
   --ray-page: #07070a;
-  --ray-glow: 0.26;
+  --ray-glow: 0.45;
   --ray-window: rgb(32 32 35 / 0.82);
   --ray-window-edge: rgb(255 255 255 / 0.12);
   --ray-window-shadow:
@@ -202,12 +202,7 @@
   }
   body {
     min-height: 100svh;
-    background:
-      radial-gradient(60% 50% at 18% 12%, rgb(255 99 99 / var(--ray-glow)), transparent 70%),
-      radial-gradient(55% 55% at 85% 20%, rgb(86 194 255 / var(--ray-glow)), transparent 70%),
-      radial-gradient(70% 60% at 55% 100%, rgb(207 142 255 / var(--ray-glow)), transparent 70%),
-      var(--ray-page);
-    background-attachment: fixed;
+    background: transparent;
     color: var(--ray-text);
     -webkit-font-smoothing: antialiased;
   }

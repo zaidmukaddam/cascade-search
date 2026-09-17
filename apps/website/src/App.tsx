@@ -1,9 +1,11 @@
+import { Field } from './components/Field.tsx'
 import { Window } from './components/Window.tsx'
 import { REPO_URL } from './lib/links.ts'
 
 export function App() {
   return (
     <main className="flex min-h-svh flex-col items-center md:px-4 md:pb-10 md:pt-[12vh]">
+      <Field />
       <p className="mb-6 text-sm text-muted-foreground max-md:hidden">
         <span className="text-foreground">cascade-search</span> · a search bar that knows when it
         doesn't know
