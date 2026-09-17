@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { Command } from '@/components/ui/command'
 import { run } from '@/lib/execute'
 import { makeIssues } from '@/lib/issues'
 import { closeIssue, showView, useStore } from '@/lib/store'
+import { viewName } from '@/lib/views'
 import { ActionBar } from './ActionBar.tsx'
 import { ActionsPanel } from './ActionsPanel.tsx'
 import { IssueList } from './IssueList.tsx'
@@ -27,9 +29,35 @@ function useCommandK(toggle: () => void) {
   }, [toggle])
 }
 
+interface TabButtonProps {
+  active: boolean
+  onClick: () => void
+  children: ReactNode
+}
+
+function TabButton({ active, onClick, children }: TabButtonProps) {
+  return (
+    <Button
+      variant="ghost"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`h-9 flex-1 truncate rounded-lg text-[13px] font-medium ${active ? 'bg-ray-selected text-ray-text' : 'text-ray-dim'}`}
+    >
+      {children}
+    </Button>
+  )
+}
+
 export function Window() {
   const state = useStore()
   const [actionsOpen, setActionsOpen] = useState(false)
+  const [tab, setTab] = useState<'results' | 'pane'>('pane')
+  useEffect(() => {
+    if (state.openIssue) setTab('pane')
+  }, [state.openIssue])
+  useEffect(() => {
+    if (state.view) setTab('pane')
+  }, [state.view])
   const frame = useRef<HTMLDivElement>(null)
   const issues = useMemo(() => makeIssues(NOW), [])
   const filter = state.result.ir
@@ -54,15 +82,27 @@ export function Window() {
         onKeyDown={event => {
           if (event.key === 'Escape' && state.openIssue) closeIssue()
         }}
-        className="h-[calc(100svh-7rem)] max-h-[720px] rounded-[14px]! border border-ray-edge bg-ray-window p-0 text-ray-text shadow-ray-window backdrop-blur-[40px] backdrop-saturate-150 md:h-[540px]"
+        className="h-svh rounded-none! bg-ray-window p-0 pb-[env(safe-area-inset-bottom)] text-ray-text backdrop-blur-[40px] backdrop-saturate-150 md:h-[540px] md:rounded-[14px]! md:border md:border-ray-edge md:pb-0 md:shadow-ray-window"
       >
         <QueryInput
           state={state}
           accessory={<ViewDropdown view={state.view} onChange={showView} />}
         />
-        <div className="grid min-h-0 flex-1 grid-cols-1 grid-rows-[11rem_minmax(0,1fr)] md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:grid-rows-1">
-          <IssueList matches={matches} total={issues.length} />
-          <Pane state={state} />
+        <div className="flex shrink-0 gap-1 border-b border-ray-line p-1.5 md:hidden">
+          <TabButton active={tab === 'results'} onClick={() => setTab('results')}>
+            Results · {matches.length.toLocaleString()}
+          </TabButton>
+          <TabButton active={tab === 'pane'} onClick={() => setTab('pane')}>
+            {state.openIssue ? 'Issue' : viewName(state.view)}
+          </TabButton>
+        </div>
+        <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+          <div className={`min-h-0 ${tab === 'results' ? '' : 'max-md:hidden'}`}>
+            <IssueList matches={matches} total={issues.length} />
+          </div>
+          <div className={`min-h-0 ${tab === 'pane' ? '' : 'max-md:hidden'}`}>
+            <Pane state={state} />
+          </div>
         </div>
         <ActionBar state={state} onOpenActions={toggleActions} />
       </Command>

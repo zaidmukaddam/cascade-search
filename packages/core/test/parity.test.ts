@@ -48,7 +48,8 @@ test('TS forward matches PyTorch on the golden queries', () => {
 test('WGSL batch path matches the TS path', async context => {
   const { create, globals } = await import('webgpu')
   Object.assign(globalThis, globals)
-  const gpu = await createGpu(weights, create([]))
+  const flags = process.platform === 'linux' ? ['backend=vulkan'] : []
+  const gpu = await createGpu(weights, create(flags))
   if (!gpu) {
     if (process.env.REQUIRE_GPU) throw new Error('no WebGPU adapter')
     return context.skip()

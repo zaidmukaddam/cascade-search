@@ -41,7 +41,7 @@ function CurrentView({ state }: { state: State }) {
 
 export function Pane({ state }: { state: State }) {
   return (
-    <div className="min-h-0 overflow-y-auto border-t border-ray-line md:border-t-0 md:border-l">
+    <div className="h-full overflow-y-auto md:border-l md:border-ray-line">
       <Suspense fallback={null}>
         <CurrentView state={state} />
       </Suspense>

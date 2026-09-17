@@ -63,7 +63,7 @@ export function ActionBar({ state, onOpenActions }: ActionBarProps) {
           className="h-7 gap-2 px-1.5 text-[13px] font-normal hover:bg-ray-selected dark:hover:bg-ray-selected"
         >
           <span className="text-ray-dim">Actions</span>
-          <span className="flex gap-0.5">
+          <span className="hidden gap-0.5 md:flex">
             <Key>⌘</Key>
             <Key>K</Key>
           </span>
