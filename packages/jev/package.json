@@ -2,7 +2,22 @@
   "name": "cascade-search-jev",
   "version": "0.1.0",
   "description": "Escalation client for cascade-search: asks Jev (TypeSafe System One) through Vercel AI Gateway.",
+  "keywords": [
+    "cascade-search",
+    "jev",
+    "typesafe",
+    "ai-gateway",
+    "system-one"
+  ],
   "license": "MIT",
+  "author": "Zaid Mukaddam",
+  "homepage": "https://github.com/zaidmukaddam/cascade-search#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaidmukaddam/cascade-search.git",
+    "directory": "packages/jev"
+  },
+  "bugs": "https://github.com/zaidmukaddam/cascade-search/issues",
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -15,7 +30,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "ai": "^7.0.105"
@@ -25,5 +41,8 @@
   },
   "devDependencies": {
     "cascade-search": "workspace:^"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

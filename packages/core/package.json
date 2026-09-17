@@ -1,8 +1,25 @@
 {
   "name": "cascade-search",
   "version": "0.1.0",
-  "description": "A ~30K-parameter in-browser query parser that knows when it doesn't know.",
+  "description": "A 27K-parameter in-browser query parser that knows when it doesn't know.",
+  "keywords": [
+    "search",
+    "query-parser",
+    "filter",
+    "webgpu",
+    "wgsl",
+    "calibration",
+    "cascade"
+  ],
   "license": "MIT",
+  "author": "Zaid Mukaddam",
+  "homepage": "https://github.com/zaidmukaddam/cascade-search#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaidmukaddam/cascade-search.git",
+    "directory": "packages/core"
+  },
+  "bugs": "https://github.com/zaidmukaddam/cascade-search/issues",
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -15,6 +32,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "pnpm build"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
