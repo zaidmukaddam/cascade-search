@@ -1,0 +1,157 @@
+{
+ "date": "2026-09-17",
+ "queries": 600,
+ "jevCalls": 222,
+ "failedEscalations": 3,
+ "cost": {
+  "jevDollarsPerMillionInputTokens": 0.042,
+  "estimatedInputTokensPerCall": 1000,
+  "dollarsPerWrongFilter": 0.002,
+  "dollarsPerNetworkWait": 0.0002
+ },
+ "inputTokensPerCall": 1017.3891402714933,
+ "inputTokensMeasured": true,
+ "default": 0.97,
+ "rows": [
+  {
+   "remote": "jev (live)",
+   "threshold": 0,
+   "accuracy": 0.935,
+   "queriesEscalated": 0,
+   "tokensEscalated": 0,
+   "callsPerQuery": 0,
+   "jevDollarsPer1k": 0,
+   "expectedCostPer1k": 0.1299999999999999
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.3,
+   "accuracy": 0.935,
+   "queriesEscalated": 0,
+   "tokensEscalated": 0,
+   "callsPerQuery": 0,
+   "jevDollarsPer1k": 0,
+   "expectedCostPer1k": 0.1299999999999999
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.5,
+   "accuracy": 0.9383333333333334,
+   "queriesEscalated": 0.013333333333333334,
+   "tokensEscalated": 0.0016460905349794238,
+   "callsPerQuery": 0.013333333333333334,
+   "jevDollarsPer1k": 0.0005424300000000001,
+   "expectedCostPer1k": 0.12654242999999996
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.6,
+   "accuracy": 0.9416666666666667,
+   "queriesEscalated": 0.03333333333333333,
+   "tokensEscalated": 0.00411522633744856,
+   "callsPerQuery": 0.03333333333333333,
+   "jevDollarsPer1k": 0.00133189,
+   "expectedCostPer1k": 0.12466522333333337
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.7,
+   "accuracy": 0.945,
+   "queriesEscalated": 0.055,
+   "tokensEscalated": 0.00720164609053498,
+   "callsPerQuery": 0.056666666666666664,
+   "jevDollarsPer1k": 0.0022695400000000004,
+   "expectedCostPer1k": 0.12326954000000011
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.8,
+   "accuracy": 0.9516666666666667,
+   "queriesEscalated": 0.07,
+   "tokensEscalated": 0.009670781893004115,
+   "callsPerQuery": 0.07166666666666667,
+   "jevDollarsPer1k": 0.0029581611111111116,
+   "expectedCostPer1k": 0.1136248277777778
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.85,
+   "accuracy": 0.9566666666666667,
+   "queriesEscalated": 0.09,
+   "tokensEscalated": 0.012345679012345678,
+   "callsPerQuery": 0.09166666666666666,
+   "jevDollarsPer1k": 0.003800746551724138,
+   "expectedCostPer1k": 0.1084674132183908
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.9,
+   "accuracy": 0.9633333333333334,
+   "queriesEscalated": 0.13166666666666665,
+   "tokensEscalated": 0.017695473251028805,
+   "callsPerQuery": 0.13333333333333333,
+   "jevDollarsPer1k": 0.005505,
+   "expectedCostPer1k": 0.10517166666666658
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.93,
+   "accuracy": 0.9633333333333334,
+   "queriesEscalated": 0.14833333333333334,
+   "tokensEscalated": 0.020370370370370372,
+   "callsPerQuery": 0.15333333333333332,
+   "jevDollarsPer1k": 0.006340279587628865,
+   "expectedCostPer1k": 0.1093402795876288
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.95,
+   "accuracy": 0.9666666666666667,
+   "queriesEscalated": 0.165,
+   "tokensEscalated": 0.022839506172839506,
+   "callsPerQuery": 0.17333333333333334,
+   "jevDollarsPer1k": 0.007147223486238532,
+   "expectedCostPer1k": 0.10681389015290518
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.97,
+   "accuracy": 0.9716666666666667,
+   "queriesEscalated": 0.185,
+   "tokensEscalated": 0.02654320987654321,
+   "callsPerQuery": 0.195,
+   "jevDollarsPer1k": 0.008160619999999999,
+   "expectedCostPer1k": 0.10182728666666664
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.98,
+   "accuracy": 0.9716666666666667,
+   "queriesEscalated": 0.21333333333333335,
+   "tokensEscalated": 0.03065843621399177,
+   "callsPerQuery": 0.225,
+   "jevDollarsPer1k": 0.009420600000000001,
+   "expectedCostPer1k": 0.10875393333333332
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.99,
+   "accuracy": 0.9716666666666667,
+   "queriesEscalated": 0.25166666666666665,
+   "tokensEscalated": 0.037654320987654324,
+   "callsPerQuery": 0.27166666666666667,
+   "jevDollarsPer1k": 0.011471523238636363,
+   "expectedCostPer1k": 0.11847152323863636
+  },
+  {
+   "remote": "jev (live)",
+   "threshold": 0.995,
+   "accuracy": 0.97,
+   "queriesEscalated": 0.30333333333333334,
+   "tokensEscalated": 0.047736625514403296,
+   "callsPerQuery": 0.3383333333333333,
+   "jevDollarsPer1k": 0.014457099683257918,
+   "expectedCostPer1k": 0.13512376634992468
+  }
+ ]
+}

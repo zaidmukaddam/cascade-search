@@ -1,0 +1,31 @@
+{
+ "simulated": true,
+ "date": "2026-09-17",
+ "loggedEscalations": 1623,
+ "before": {
+  "queries": 3000,
+  "threshold": 0.97,
+  "queriesEscalated": 0.539,
+  "tokensEscalated": 0.0857286576602472,
+  "localExactFilter": 0.498
+ },
+ "after": {
+  "queries": 3000,
+  "threshold": 0.97,
+  "queriesEscalated": 0.5003333333333333,
+  "tokensEscalated": 0.07182379994251221,
+  "localExactFilter": 0.5183333333333333
+ },
+ "m2Calibration": {
+  "before": {
+   "transferAccuracy": 0.9903873206414705,
+   "transferEce": 0.003098719353271711,
+   "rateFor995": 0.012301103504329614
+  },
+  "after": {
+   "transferAccuracy": 0.9901997561661822,
+   "transferEce": 0.003100120355425608,
+   "rateFor995": 0.012676232454906374
+  }
+ }
+}

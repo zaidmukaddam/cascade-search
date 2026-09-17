@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cascade Search — a search bar that knows when it doesn't know</title>
+    <meta name="description" content="A 27K-parameter query parser running in this tab, in under a millisecond. It escalates only the words it is unsure about to Jev, and every number on the page is measured on your device." />
+    <meta property="og:title" content="A search bar that knows when it doesn't know" />
+    <meta property="og:description" content="27K parameters, 35 KB, runs in your tab. Escalates only what it is unsure of." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The cascade-search window: a query underlined in orange where the local model was unsure, with Jev's decisions beside it" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="/og.png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      const saved = localStorage.getItem('theme')
+      const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+      document.documentElement.classList.toggle('dark', dark)
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

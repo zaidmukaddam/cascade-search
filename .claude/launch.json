@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "website",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "cascade-search-website",
+        "dev",
+        "--port",
+        "5183",
+        "--strictPort"
+      ],
+      "port": 5183
+    }
+  ]
+}

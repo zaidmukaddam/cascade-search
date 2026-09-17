@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "types": ["vite/client", "node", "@webgpu/types"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "cascade-search": ["../../packages/core/src/index.ts"],
+      "cascade-search-jev": ["../../packages/jev/src/index.ts"]
+    }
+  },
+  "include": ["src", "api", "vite.config.ts"]
+}

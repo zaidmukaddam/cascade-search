@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "paths": { "cascade-search": ["./packages/core/src/index.ts"] }
+  },
+  "include": ["packages/*/src", "packages/*/test", "training", "eval"],
+  "exclude": ["apps", "**/dist", "**/node_modules"]
+}

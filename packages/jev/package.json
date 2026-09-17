@@ -1,0 +1,29 @@
+{
+  "name": "cascade-search-jev",
+  "version": "0.1.0",
+  "description": "Escalation client for cascade-search: asks Jev (TypeSafe System One) through Vercel AI Gateway.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "ai": "^7.0.105"
+  },
+  "peerDependencies": {
+    "cascade-search": "workspace:^"
+  },
+  "devDependencies": {
+    "cascade-search": "workspace:^"
+  }
+}

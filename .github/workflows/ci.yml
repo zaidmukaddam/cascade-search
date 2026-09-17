@@ -1,0 +1,27 @@
+name: ci
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 11 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - uses: astral-sh/setup-uv@v6
+      - name: software Vulkan device for the WGSL parity check
+        run: sudo apt-get update && sudo apt-get install -y mesa-vulkan-drivers
+      - run: pnpm install --frozen-lockfile
+      - name: lint and format
+        run: pnpm lint && uvx ruff check training && uvx ruff format --check training
+      - name: types
+        run: pnpm typecheck
+      - name: tests and TS/WGSL parity
+        run: pnpm test
+        env: { REQUIRE_GPU: 1 }
+      - name: bundle-size gate
+        run: pnpm --filter cascade-search build && pnpm size
+      - name: website build
+        run: pnpm --filter cascade-search-website build

@@ -1,0 +1,20 @@
+{
+  "name": "cascade-search",
+  "version": "0.1.0",
+  "description": "A ~30K-parameter in-browser query parser that knows when it doesn't know.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  }
+}

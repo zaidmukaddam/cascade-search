@@ -1,0 +1,9 @@
+node_modules
+dist
+.venv
+__pycache__
+training/data
+training/ckpt-m6.pt
+.env*
+.vercel
+*.log

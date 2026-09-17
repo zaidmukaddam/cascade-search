@@ -1,0 +1,14 @@
+[project]
+name = "cascade-training"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = ["torch>=2.6", "numpy", "matplotlib"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["data", "model"]
