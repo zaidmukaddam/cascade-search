@@ -1,21 +1,26 @@
-const MAX_WIDTH_PX = 360
-const MIN_CELL_PX = 3
-const MAX_CELL_PX = 9
-const GAP_PX = 1
+import { useLayoutEffect, useRef, useState } from 'react'
 
-const POSITIVE = [234, 120, 40]
-const NEGATIVE = [60, 130, 230]
+const MIN_CELL_PX = 3
+const MAX_CELL_PX = 14
+const ROW_PX = 14
+const GAP_PX = 1
+const RADIUS_PX = 1.5
+const DEAD_ZONE = 0.04
+
+const POSITIVE = [255, 122, 40]
+const NEGATIVE = [56, 150, 255]
 
 interface HeatmapProps {
   data: ArrayLike<number>
   rows: number
   columns: number
-  label: string
+  label?: string
   rowLabels?: string[]
+  columnLabels?: string[]
 }
 
-function cellSize(columns: number): number {
-  return Math.max(MIN_CELL_PX, Math.min(MAX_CELL_PX, Math.floor(MAX_WIDTH_PX / columns)))
+function cellSize(available: number, columns: number): number {
+  return Math.max(MIN_CELL_PX, Math.min(MAX_CELL_PX, Math.floor(available / columns)))
 }
 
 function largestMagnitude(data: ArrayLike<number>, count: number): number {
@@ -24,45 +29,71 @@ function largestMagnitude(data: ArrayLike<number>, count: number): number {
   return largest
 }
 
-function colorFor(normalized: number): string {
+function colorFor(normalized: number): string | null {
+  const magnitude = Math.abs(normalized)
+  if (magnitude < DEAD_ZONE) return null
   const [red, green, blue] = normalized >= 0 ? POSITIVE : NEGATIVE
-  const strength = 0.08 + 0.92 * Math.abs(normalized)
+  const strength = 0.18 + 0.82 * magnitude ** 0.8
   return `rgb(${red} ${green} ${blue} / ${strength.toFixed(3)})`
 }
 
-function paint(canvas: HTMLCanvasElement, { data, rows, columns }: HeatmapProps) {
-  const cell = cellSize(columns)
-  canvas.width = columns * cell
-  canvas.height = rows * cell
+function paint(canvas: HTMLCanvasElement, cell: number, { data, rows, columns }: HeatmapProps) {
+  const dpr = window.devicePixelRatio || 1
+  canvas.width = columns * cell * dpr
+  canvas.height = rows * ROW_PX * dpr
+  canvas.style.width = `${columns * cell}px`
+  canvas.style.height = `${rows * ROW_PX}px`
   const context = canvas.getContext('2d')
   if (!context) return
+  context.scale(dpr, dpr)
 
   const scale = largestMagnitude(data, rows * columns)
   for (let row = 0; row < rows; row++) {
     for (let column = 0; column < columns; column++) {
-      context.fillStyle = colorFor(data[row * columns + column] / scale)
-      context.fillRect(column * cell, row * cell, cell - GAP_PX, cell - GAP_PX)
+      const color = colorFor(data[row * columns + column] / scale)
+      if (!color) continue
+      context.fillStyle = color
+      context.beginPath()
+      context.roundRect(column * cell, row * ROW_PX, cell - GAP_PX, ROW_PX - GAP_PX, RADIUS_PX)
+      context.fill()
     }
   }
 }
 
+function useWidth<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
+  const [width, setWidth] = useState(0)
+  useLayoutEffect(() => {
+    const element = ref.current
+    if (!element) return
+    const observer = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width))
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+  return [ref, width] as const
+}
+
 export function Heatmap(props: HeatmapProps) {
-  const rowHeight = `${cellSize(props.columns)}px`
+  const [container, width] = useWidth<HTMLDivElement>()
+  const cell = cellSize(width, props.columns)
+  const rowHeight = `${ROW_PX}px`
   return (
-    <figure className="space-y-1.5">
-      <figcaption className="text-xs text-ray-dim">
-        {props.label}{' '}
-        <span className="tabular-nums opacity-60">
-          {props.rows}×{props.columns}
-        </span>
-      </figcaption>
-      <div className="flex gap-2">
+    <figure>
+      {props.label && (
+        <figcaption className="mb-2 flex items-baseline gap-2 text-[13px] text-ray-text">
+          {props.label}
+          <span className="font-mono text-[11px] tabular-nums text-ray-faint">
+            {props.rows}×{props.columns}
+          </span>
+        </figcaption>
+      )}
+      <div className="flex gap-2.5">
         {props.rowLabels && (
-          <div className="flex w-12 shrink-0 flex-col font-mono text-[9px] leading-none text-ray-dim">
+          <div className="flex w-16 shrink-0 flex-col text-right font-mono text-[11px] leading-none text-ray-dim">
             {props.rowLabels.map((label, index) => (
               <span
                 key={`${label}-${index}`}
-                className="flex items-center justify-end"
+                className="flex items-center justify-end truncate"
                 style={{ height: rowHeight }}
               >
                 {label}
@@ -70,15 +101,31 @@ export function Heatmap(props: HeatmapProps) {
             ))}
           </div>
         )}
-        <canvas
-          ref={canvas => {
-            if (canvas) paint(canvas, props)
-          }}
-          className="max-w-full"
-          style={{ imageRendering: 'pixelated' }}
-          role="img"
-          aria-label={props.label}
-        />
+        <div ref={container} className="min-w-0 flex-1">
+          {width > 0 && (
+            <canvas
+              ref={canvas => {
+                if (canvas) paint(canvas, cell, props)
+              }}
+              className="block rounded-[3px] bg-ray-selected"
+              role="img"
+              aria-label={props.label ?? 'activations'}
+            />
+          )}
+          {props.columnLabels && (
+            <div className="mt-1.5 flex font-mono text-[9px] leading-none text-ray-faint">
+              {props.columnLabels.map(name => (
+                <span
+                  key={name}
+                  className="flex justify-center [writing-mode:vertical-lr]"
+                  style={{ width: `${cell}px` }}
+                >
+                  {name.toLowerCase()}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </figure>
   )
