@@ -25,13 +25,13 @@ async function serveEscalate(
   request: IncomingMessage,
   response: ServerResponse,
 ) {
-  const { default: handler } = await server.ssrLoadModule('/api/escalate.ts')
+  const { handle } = await server.ssrLoadModule('/api/escalate.ts')
   const webRequest = new Request(`http://dev${ESCALATE_ROUTE}`, {
     method: request.method,
     headers: request.headers as HeadersInit,
     body: await readBody(request),
   })
-  const webResponse: Response = await handler(webRequest)
+  const webResponse: Response = await handle(webRequest)
 
   response.statusCode = webResponse.status
   for (const [name, value] of webResponse.headers) response.setHeader(name, value)

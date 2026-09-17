@@ -2,8 +2,6 @@ import { createJev, type JevCall, JevError, type JevErrorKind } from 'cascade-se
 import { remainingCalls, spendCall } from './_lib/budget.ts'
 import { validateRequest } from './_lib/validate.ts'
 
-export const config = { runtime: 'edge' }
-
 const JEV_TIMEOUT_MS = 4000
 
 const STATUS_BY_KIND: Record<JevErrorKind, number> = {
@@ -39,7 +37,7 @@ function gatewayConfigured(): boolean {
   return hasKey || runsOnVercel
 }
 
-export default async function handler(request: Request): Promise<Response> {
+export async function handle(request: Request): Promise<Response> {
   const address = clientAddress(request)
   const available = gatewayConfigured()
 
@@ -80,3 +78,5 @@ export default async function handler(request: Request): Promise<Response> {
     return failure(kind, (error as Error).message, remainingCalls(address))
   }
 }
+
+export default { fetch: handle }
