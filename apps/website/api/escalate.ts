@@ -34,7 +34,9 @@ function clientAddress(request: Request): string {
 }
 
 function gatewayConfigured(): boolean {
-  return Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN)
+  const hasKey = Boolean(process.env.AI_GATEWAY_API_KEY)
+  const runsOnVercel = Boolean(process.env.VERCEL || process.env.VERCEL_OIDC_TOKEN)
+  return hasKey || runsOnVercel
 }
 
 export default async function handler(request: Request): Promise<Response> {
