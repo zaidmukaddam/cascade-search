@@ -47,13 +47,21 @@ function Results({ result }: { result: BenchResult }) {
 export function BackendsView() {
   const [result, setResult] = useState<BenchResult | null>(null)
   const [running, setRunning] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const start = () => {
     setRunning(true)
-    const script = new URL('../workers/bench.worker.ts', import.meta.url)
-    const worker = new Worker(script, { type: 'module' })
+    setError(null)
+    const worker = new Worker(new URL('../workers/bench.worker.ts', import.meta.url), {
+      type: 'module',
+    })
     worker.onmessage = (event: MessageEvent<BenchResult>) => {
       setResult(event.data)
+      setRunning(false)
+      worker.terminate()
+    }
+    worker.onerror = event => {
+      setError(event.message || 'the benchmark worker failed to start')
       setRunning(false)
       worker.terminate()
     }
@@ -72,6 +80,7 @@ export function BackendsView() {
         <Button size="sm" variant="secondary" onClick={start} disabled={running}>
           {running ? 'Running…' : 'Run 1,024 Queries on Both'}
         </Button>
+        {error && <DetailText>Could not run: {error}</DetailText>}
       </DetailBody>
       {result && <Results result={result} />}
     </>
