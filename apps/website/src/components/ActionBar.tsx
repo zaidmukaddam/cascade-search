@@ -5,7 +5,7 @@ import type { State } from '@/lib/store'
 
 function Key({ children }: { children: ReactNode }) {
   return (
-    <Kbd className="h-5 min-w-5 rounded-[5px] bg-ray-key px-1 text-[11px] text-ray-dim">
+    <Kbd className="h-5 min-w-5 rounded-[5px] bg-ray-key px-1 font-mono text-[11px] text-ray-dim">
       {children}
     </Kbd>
   )
@@ -52,7 +52,7 @@ export function ActionBar({ state, onOpenActions }: ActionBarProps) {
       <div className="ml-auto flex shrink-0 items-center gap-3">
         <span className="hidden items-center gap-2 sm:flex">
           <span className="font-medium">Open Issue</span>
-          <Key>↵</Key>
+          <Key>⏎</Key>
         </span>
         <span className="hidden h-3 w-px bg-ray-line sm:block" />
         <Button
