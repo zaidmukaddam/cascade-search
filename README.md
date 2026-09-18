@@ -1,6 +1,6 @@
 # cascade-search
 
-A search bar that knows when it doesn't know.
+A search bar that knows when it doesn't know. Demo: [cascade.scira.ai](https://cascade.scira.ai).
 
 A 26,947-parameter model parses search queries in the browser in about a quarter of a millisecond. It gives every word a role and a calibrated confidence. Words it is unsure about, and only those, go to [Jev](https://docs.typesafe.ai/introduction), TypeSafe's System One model, for a typed decision with probabilities. Both tiers feed one compiler, so the app receives the same filter type no matter which tier answered, and nothing in the chain ever parses a string a model wrote.
 
