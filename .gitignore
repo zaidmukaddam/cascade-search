@@ -7,3 +7,4 @@ training/ckpt-m6.pt
 .env*
 .vercel
 *.log
+apps/video/out/
