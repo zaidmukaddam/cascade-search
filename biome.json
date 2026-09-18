@@ -8,7 +8,9 @@
       "!**/weights.gen.ts",
       "!**/golden.json",
       "!eval/results",
-      "!**/weights/manifest.json"
+      "!**/weights/manifest.json",
+      "!apps/video/src/components/remocn",
+      "!apps/video/src/lib/remocn-ui"
     ]
   },
   "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 100 },

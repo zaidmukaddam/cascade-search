@@ -1,9 +1,9 @@
 :root {
-  --font-geist-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-geist-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .mono,
 .mono span {
-  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  font-family: "JetBrains Mono", ui-monospace, monospace !important;
   letter-spacing: 0 !important;
 }

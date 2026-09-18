@@ -1,5 +1,5 @@
 import { Composition } from 'remotion'
-import { Launch, LAUNCH_FRAMES } from './Launch.tsx'
+import { LAUNCH_FRAMES, Launch } from './Launch.tsx'
 
 export function Root() {
   return (

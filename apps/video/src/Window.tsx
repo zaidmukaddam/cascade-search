@@ -66,7 +66,9 @@ function WordRow({ token, unsure }: { token: TokenResult; unsure: boolean }) {
       <span style={{ width: 130 }}>
         <Tag role={token.role} />
       </span>
-      <span style={{ flex: 1, height: 5, borderRadius: 999, background: TRACK, overflow: 'hidden' }}>
+      <span
+        style={{ flex: 1, height: 5, borderRadius: 999, background: TRACK, overflow: 'hidden' }}
+      >
         <span
           style={{
             display: 'block',
@@ -77,9 +79,7 @@ function WordRow({ token, unsure }: { token: TokenResult; unsure: boolean }) {
           }}
         />
       </span>
-      <span
-        style={{ width: 56, textAlign: 'right', fontFamily: MONO, fontSize: 15, color: DIM }}
-      >
+      <span style={{ width: 56, textAlign: 'right', fontFamily: MONO, fontSize: 15, color: DIM }}>
         {token.confidence.toFixed(3)}
       </span>
     </div>
@@ -210,10 +210,7 @@ export function Window({ query, typeFrom = 0, escalation }: WindowProps) {
             value={jevDone ? 'Escalated to Jev' : 'Local'}
             tint={jevDone ? ACCENT : GREEN}
           />
-          <Meta
-            label="Latency"
-            value={jevDone ? `0.25 ms + ${escalation.ms} ms` : '0.25 ms'}
-          />
+          <Meta label="Latency" value={jevDone ? `0.25 ms + ${escalation.ms} ms` : '0.25 ms'} />
           <Meta
             label="Sent to Jev"
             value={
