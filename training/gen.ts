@@ -43,6 +43,7 @@ export const SEEDS = { train: 1, val: 2, transfer: 3 }
 const MIN_FIELDS = 3
 const KEEP_FIELD = 0.85
 const KNOWN_PERSON = 0.2
+const VIEW_RATE = 0.22
 
 const OPENERS: Labeled[][] = [
   [
@@ -112,11 +113,13 @@ function chooseClauses(writer: ClauseWriter, random: Random): (() => Labeled[])[
 function writeQuery(domain: Domain, schema: Schema, random: Random) {
   const writer = new ClauseWriter(random, domain, schema)
   const clauses = chooseClauses(writer, random)
-  const sortFirst = random.chance(0.1)
+  const view = random.chance(VIEW_RATE) ? writer.viewClause() : null
+  const sortFirst = !view && random.chance(0.1)
 
   const words: Labeled[] = []
   if (random.chance(0.35)) words.push(...random.pick(OPENERS))
-  const limitFirst = random.chance(0.12)
+  if (view) words.push(...view.before)
+  const limitFirst = !view && random.chance(0.12)
   if (limitFirst) words.push(...writer.limitClause())
   if (sortFirst) words.push(...writer.sortClause())
   const entityAfter = random.chance(0.5) ? random.int(0, clauses.length - 1) : -1
@@ -137,6 +140,7 @@ function writeQuery(domain: Domain, schema: Schema, random: Random) {
     }
   })
 
+  if (view) words.push(...view.after)
   if (!sortFirst && random.chance(0.25)) words.push(...writer.sortClause())
   if (!limitFirst && random.chance(0.08)) words.push(...writer.limitClause())
   if (random.chance(0.05)) words.push(['please', 'O'])

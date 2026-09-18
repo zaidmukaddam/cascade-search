@@ -33,6 +33,11 @@ export const LEXICON = {
   TEXTPREP: words(
     'about containing contains contain mentioning mentions titled named called matching like regarding saying',
   ),
+  GROUP: words('by per each grouped group grouping across'),
+  CHART: words(
+    'chart graph plot bar bars pie donut line trend histogram breakdown distribution visualize',
+  ),
+  AGG: words('count many total sum average avg mean'),
 }
 
 export type LexiconName = keyof typeof LEXICON

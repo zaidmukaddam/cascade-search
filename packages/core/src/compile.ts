@@ -1,6 +1,17 @@
 import { inLexicon } from './lexicon.ts'
 import { type Hit, matchToken } from './match.ts'
-import type { Cond, Field, FieldKind, Filter, Op, Role, Schema } from './types.ts'
+import type {
+  Aggregate,
+  ChartKind,
+  Cond,
+  Field,
+  FieldKind,
+  Filter,
+  Op,
+  Role,
+  Schema,
+  View,
+} from './types.ts'
 
 type Direction = 'asc' | 'desc'
 type PendingNumber = { op: Op; value: number; negated: boolean }
@@ -30,6 +41,24 @@ const NUMBER_WORDS: Record<string, number> = {
 
 const MAGNITUDE: Record<string, number> = { '': 1, k: 1e3, m: 1e6 }
 
+const CHART_KIND: Record<string, ChartKind> = {
+  bar: 'bar',
+  bars: 'bar',
+  histogram: 'bar',
+  pie: 'pie',
+  donut: 'pie',
+  line: 'line',
+  trend: 'line',
+}
+
+const AGGREGATE: Record<string, Aggregate> = {
+  total: 'sum',
+  sum: 'sum',
+  average: 'avg',
+  avg: 'avg',
+  mean: 'avg',
+}
+
 function operatorFor(word: string): Op | null {
   if (AT_LEAST_WORDS.includes(word)) return 'gte'
   if (AT_MOST_WORDS.includes(word)) return 'lte'
@@ -52,7 +81,10 @@ function opposite(direction: Direction): Direction {
 }
 
 class Compiler {
-  private readonly filter: Filter = { where: [], sort: [], limit: null }
+  private readonly filter: Filter = { where: [], sort: [], limit: null, view: null }
+  private chartKind: ChartKind | null = null
+  private expectsGroupField = false
+  private expectsMeasureField = false
   private namedField: Field | null = null
   private previousField: Field | null = null
   private operator: Op | null = null
@@ -79,6 +111,7 @@ class Compiler {
       this.handle(role, text, text.toLowerCase())
     }
     this.attachPendingNumberToOnlyNumberField()
+    this.settleView()
     return this.filter
   }
 
@@ -113,7 +146,44 @@ class Compiler {
         return this.onNumber(word)
       case 'VAL_TEXT':
         return this.onText()
+      case 'GROUP':
+        this.ensureView()
+        this.expectsGroupField = true
+        return
+      case 'CHART':
+        this.ensureView()
+        this.chartKind = CHART_KIND[word] ?? this.chartKind
+        return
+      case 'AGG':
+        this.ensureView().agg = AGGREGATE[word] ?? 'count'
+        this.expectsMeasureField = word in AGGREGATE
+        return
     }
+  }
+
+  private ensureView(): View {
+    this.filter.view ??= { chart: 'bar', by: null, agg: 'count', of: null }
+    return this.filter.view
+  }
+
+  private settleView() {
+    const view = this.filter.view
+    if (!view) return
+    if (view.agg !== 'count' && !view.of) {
+      const measure = this.firstFieldOf('number')
+      if (measure) view.of = measure.name
+      else view.agg = 'count'
+    }
+
+    const wantsGroups = this.chartKind === 'bar' || this.chartKind === 'pie'
+    if (!view.by && wantsGroups) view.by = this.firstFieldOf('enum')?.name ?? null
+    if (!view.by && this.chartKind === 'line') view.by = this.firstFieldOf('date')?.name ?? null
+
+    const groupedByDate = this.schema.fields.some(
+      field => field.name === view.by && field.kind === 'date',
+    )
+    if (!view.by) view.chart = 'number'
+    else view.chart = this.chartKind ?? (groupedByDate ? 'line' : 'bar')
   }
 
   private firstFieldOf(kind: FieldKind): Field | undefined {
@@ -174,7 +244,14 @@ class Compiler {
     if (!named) return
 
     const field = named.field!
-    if (this.expectsSortField || this.pendingDirection) {
+    if (this.expectsGroupField) {
+      this.ensureView().by = field.name
+      this.expectsGroupField = false
+      this.expectsMeasureField = false
+    } else if (this.expectsMeasureField && field.kind === 'number') {
+      this.ensureView().of = field.name
+      this.expectsMeasureField = false
+    } else if (this.expectsSortField || this.pendingDirection) {
       this.addSort(field, this.pendingDirection ?? 'asc', false)
     } else if (this.pendingNumber && field.kind === 'number') {
       this.attachPendingNumber(field)

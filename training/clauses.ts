@@ -1,5 +1,7 @@
 import { matchToken } from '../packages/core/src/match.ts'
 import type {
+  Aggregate,
+  ChartKind,
   Cond,
   Field,
   FieldKind,
@@ -59,6 +61,55 @@ const COMPARISONS: Comparison[] = [
   [[':'], 'eq'],
 ]
 
+const CHART_WORDS: Record<'bar' | 'pie' | 'line', string[]> = {
+  bar: ['bar', 'bar', 'bars', 'histogram'],
+  pie: ['pie', 'pie', 'donut'],
+  line: ['line', 'line', 'trend'],
+}
+
+const COUNT_OPENERS: Labeled[][] = [
+  [
+    ['how', 'O'],
+    ['many', 'AGG'],
+  ],
+  [['count', 'AGG']],
+  [
+    ['count', 'AGG'],
+    ['of', 'O'],
+  ],
+  [
+    ['count', 'AGG'],
+    ['the', 'O'],
+  ],
+]
+
+const MEASURE_WORDS: [string, Aggregate][] = [
+  ['total', 'sum'],
+  ['sum', 'sum'],
+  ['average', 'avg'],
+  ['avg', 'avg'],
+  ['mean', 'avg'],
+]
+
+const GROUP_WORDS: Labeled[][] = [
+  [['by', 'GROUP']],
+  [['by', 'GROUP']],
+  [['per', 'GROUP']],
+  [
+    ['grouped', 'GROUP'],
+    ['by', 'GROUP'],
+  ],
+  [
+    ['group', 'GROUP'],
+    ['by', 'GROUP'],
+  ],
+  [
+    ['for', 'O'],
+    ['each', 'GROUP'],
+  ],
+  [['across', 'GROUP']],
+]
+
 const TYPO_MIN_LENGTH = 5
 const TYPO_RATE = 0.06
 
@@ -77,7 +128,7 @@ function condition(field: Field, op: Op, value: string | number, negated = false
 }
 
 export class ClauseWriter {
-  readonly filter: Filter = { where: [], sort: [], limit: null }
+  readonly filter: Filter = { where: [], sort: [], limit: null, view: null }
 
   private readonly random: Random
   private readonly domain: Domain
@@ -346,6 +397,83 @@ export class ClauseWriter {
     }
     this.filter.sort.push({ field: field.name, dir: direction ?? 'asc' })
     return words
+  }
+
+  private groupFieldWord(field: Field): string {
+    const aliases = (field.aliases ?? []).filter(
+      alias => !PREPOSITION_ALIASES.includes(alias) && !alias.endsWith('ed'),
+    )
+    return this.fieldWord(field, [field.name, field.name, ...aliases])
+  }
+
+  private chartWords(kind: keyof typeof CHART_WORDS | null): Labeled[] {
+    const { random } = this
+    const generic = random.pick(['chart', 'graph', 'plot'])
+    if (!kind) {
+      const word = random.pick([generic, generic, 'breakdown', 'distribution'])
+      return [[word, 'CHART']]
+    }
+    const kindWord = random.pick(CHART_WORDS[kind])
+    const words: Labeled[] = [[kindWord, 'CHART']]
+    if (kindWord !== 'histogram' && kindWord !== 'trend' && random.chance(0.7)) {
+      words.push([generic, 'CHART'])
+    }
+    return words
+  }
+
+  viewClause(): { before: Labeled[]; after: Labeled[] } {
+    const { random } = this
+    const before: Labeled[] = []
+    const after: Labeled[] = []
+    const groupable = this.schema.fields.filter(
+      field => field.kind === 'enum' || field.kind === 'person' || field.kind === 'date',
+    )
+    const numberFields = this.fieldsOf('number')
+
+    let agg: Aggregate = 'count'
+    let of: string | null = null
+    const style = random.next()
+    if (style < 0.25) {
+      before.push(...random.pick(COUNT_OPENERS))
+    } else if (style < 0.45 && numberFields.length) {
+      const measure = random.pick(numberFields)
+      const [word, aggregate] = random.pick(MEASURE_WORDS)
+      agg = aggregate
+      of = measure.name
+      before.push([word, 'AGG'], [this.fieldWord(measure), 'FIELD'])
+      if (random.chance(0.6)) before.push([random.pick(['of', 'for']), 'O'])
+    }
+
+    const aggregated = before.length > 0
+    const explicitKind = random.chance(aggregated ? 0.2 : 0.55)
+      ? random.pick(['bar', 'pie', 'line'] as const)
+      : null
+    const showsChartWord = explicitKind !== null || (!aggregated && random.chance(0.5))
+    const chartFirst = showsChartWord && random.chance(0.5)
+    if (showsChartWord && chartFirst) {
+      before.unshift(...this.chartWords(explicitKind), ['of', 'O'])
+    }
+
+    const grouped = groupable.length > 0 && random.chance(aggregated ? 0.5 : 0.85)
+    let by: string | null = null
+    if (grouped) {
+      const field = random.pick(groupable)
+      by = field.name
+      after.push(...random.pick(GROUP_WORDS), [this.groupFieldWord(field), 'FIELD'])
+    }
+    if (showsChartWord && !chartFirst) {
+      after.push(['as', 'O'], ['a', 'O'], ...this.chartWords(explicitKind))
+    }
+    if (!before.length && !after.length) before.push(...random.pick(COUNT_OPENERS))
+
+    const firstOf = (kind: FieldKind) => this.fieldsOf(kind)[0]?.name ?? null
+    if (!by && (explicitKind === 'bar' || explicitKind === 'pie')) by = firstOf('enum')
+    if (!by && explicitKind === 'line') by = firstOf('date')
+    const byDate = this.fieldsOf('date').some(field => field.name === by)
+    const chart: ChartKind = by ? (explicitKind ?? (byDate ? 'line' : 'bar')) : 'number'
+
+    this.filter.view = { chart, by, agg, of }
+    return { before, after }
   }
 
   limitClause(): Labeled[] {

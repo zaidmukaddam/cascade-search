@@ -47,7 +47,7 @@ export function QueryInput({ state, accessory }: QueryInputProps) {
           autoFocus
           value={state.query}
           onValueChange={query => update({ query })}
-          placeholder="Search issues in plain words…"
+          placeholder="Search issues in plain words, or ask for a chart…"
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}

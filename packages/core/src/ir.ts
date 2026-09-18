@@ -1,4 +1,4 @@
-import type { Cond, Filter, Op } from './types.ts'
+import type { Aggregate, ChartKind, Cond, Filter, Op, View } from './types.ts'
 
 const OPERATOR_SYMBOL: Record<Op, string> = {
   eq: ':',
@@ -21,6 +21,9 @@ const CLOSE_GROUP = String.raw`(?<close>\))`
 const OR_KEYWORD = String.raw`(?<or>OR)\b`
 const SORT = String.raw`@sort:(?<descending>-?)(?<sortField>[A-Za-z_][\w-]*)`
 const LIMIT = String.raw`@limit:(?<limit>\d+)`
+const CHART = String.raw`@chart:(?<chart>bar|pie|line|number)`
+const GROUP_BY = String.raw`@by:(?<by>[A-Za-z_][\w-]*)`
+const AGGREGATE = String.raw`@agg:(?<agg>count|sum|avg)(?::(?<of>[A-Za-z_][\w-]*))?`
 const CONDITION = [
   String.raw`(?<negated>-?)(?<field>[A-Za-z_][\w-]*)`,
   '(?<symbol>>=|<=|[:><~])',
@@ -28,7 +31,7 @@ const CONDITION = [
 ].join('')
 
 const TOKEN = new RegExp(
-  String.raw`\s*(?:${[OPEN_GROUP, CLOSE_GROUP, OR_KEYWORD, SORT, LIMIT, CONDITION].join('|')})`,
+  String.raw`\s*(?:${[OPEN_GROUP, CLOSE_GROUP, OR_KEYWORD, SORT, LIMIT, CHART, GROUP_BY, AGGREGATE, CONDITION].join('|')})`,
   'y',
 )
 
@@ -50,6 +53,12 @@ export function pretty(filter: Filter): string {
     parts.push(`@sort:${sort.dir === 'desc' ? '-' : ''}${sort.field}`)
   }
   if (filter.limit !== null) parts.push(`@limit:${filter.limit}`)
+  if (filter.view) {
+    const { chart, by, agg, of } = filter.view
+    parts.push(`@chart:${chart}`)
+    if (by) parts.push(`@by:${by}`)
+    parts.push(of ? `@agg:${agg}:${of}` : `@agg:${agg}`)
+  }
   return parts.join(' ')
 }
 
@@ -59,7 +68,11 @@ function readValue(raw: string): string | number {
 }
 
 export function parseFilter(source: string): Filter {
-  const filter: Filter = { where: [], sort: [], limit: null }
+  const filter: Filter = { where: [], sort: [], limit: null, view: null }
+  const view = (): View => {
+    filter.view ??= { chart: 'number', by: null, agg: 'count', of: null }
+    return filter.view
+  }
   const end = source.trimEnd().length
   let group: Cond[] | null = null
   TOKEN.lastIndex = 0
@@ -80,6 +93,13 @@ export function parseFilter(source: string): Filter {
       filter.sort.push({ field: token.sortField, dir: token.descending ? 'desc' : 'asc' })
     } else if (token.limit) {
       filter.limit = Number(token.limit)
+    } else if (token.chart) {
+      view().chart = token.chart as ChartKind
+    } else if (token.by) {
+      view().by = token.by
+    } else if (token.agg) {
+      view().agg = token.agg as Aggregate
+      view().of = token.of ?? null
     } else if (token.field) {
       const condition: Cond = {
         field: token.field,

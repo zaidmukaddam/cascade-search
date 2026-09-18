@@ -7,7 +7,7 @@ import { tokenize } from './tokenize.ts'
 import { type Filter, ROLES, type Schema, type TokenResult } from './types.ts'
 import { defaultWeights, type Weights } from './weights.ts'
 
-export const DEFAULT_THRESHOLD = 0.97
+export const DEFAULT_THRESHOLD = 0.95
 
 export interface ParseOptions {
   threshold?: number

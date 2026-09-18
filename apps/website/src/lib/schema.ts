@@ -16,6 +16,10 @@ export const LABELED_EXAMPLES = [
   { label: 'Everyone but me', query: 'closed by anyone except me since tuesday' },
   { label: 'No grammar at all', query: 'timeout auth sam kinda recent' },
   { label: 'Slang', query: 'whatever raj filed re billing' },
+  { label: 'A chart', query: 'open bugs by assignee' },
+  { label: 'A pie', query: 'pie chart of urgent issues by status' },
+  { label: 'Just a number', query: 'how many bugs closed last month' },
+  { label: 'A trend', query: 'total points per created as a line chart' },
 ]
 
 export const EXAMPLES = LABELED_EXAMPLES.map(example => example.query)

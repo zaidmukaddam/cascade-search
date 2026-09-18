@@ -1,12 +1,13 @@
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Command } from '@/components/ui/command'
-import { run } from '@/lib/execute'
+import { aggregate, run } from '@/lib/execute'
 import { makeIssues } from '@/lib/issues'
 import { closeIssue, showView, useStore } from '@/lib/store'
 import { viewName } from '@/lib/views'
 import { ActionBar } from './ActionBar.tsx'
 import { ActionsPanel } from './ActionsPanel.tsx'
+import { Chart } from './Chart.tsx'
 import { IssueList } from './IssueList.tsx'
 import { Pane } from './Pane.tsx'
 import { QueryInput } from './QueryInput.tsx'
@@ -66,6 +67,11 @@ export function Window() {
     [issues, filter, state.schema],
   )
 
+  const slices = useMemo(
+    () => aggregate(issues, filter, state.schema, NOW),
+    [issues, filter, state.schema],
+  )
+
   const toggleActions = useMemo(() => () => setActionsOpen(open => !open), [])
   useCommandK(toggleActions)
 
@@ -97,8 +103,11 @@ export function Window() {
           </TabButton>
         </div>
         <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-          <div className={`min-h-0 ${tab === 'results' ? '' : 'max-md:hidden'}`}>
-            <IssueList matches={matches} total={issues.length} />
+          <div className={`flex min-h-0 flex-col ${tab === 'results' ? '' : 'max-md:hidden'}`}>
+            {filter.view && <Chart view={filter.view} slices={slices} />}
+            <div className="min-h-0 flex-1">
+              <IssueList matches={matches} total={issues.length} />
+            </div>
           </div>
           <div className={`min-h-0 ${tab === 'pane' ? '' : 'max-md:hidden'}`}>
             <Pane state={state} />

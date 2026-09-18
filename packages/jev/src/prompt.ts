@@ -16,6 +16,10 @@ export const ROLE_GUIDE: Record<Role, string> = {
   DIR: 'A sort direction: ascending, descending, first, last, highest, lowest.',
   LIMIT: 'A word that introduces a result limit: top, first N, limit, only.',
   OR: "The word 'or' joining two alternatives.",
+  GROUP:
+    'A word that introduces grouping for a chart or a count: "by status", "per assignee", "for each", "grouped by". Not "by" standing for a person ("closed by sam"), which is FIELD, and not "sorted by", which is SORT.',
+  CHART: 'Asks for a visual or names its kind: chart, graph, plot, bar, pie, line, breakdown.',
+  AGG: 'Asks for a number instead of rows: count, how many, total, sum, average.',
 }
 
 const GUIDANCE = [

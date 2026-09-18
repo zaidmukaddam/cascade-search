@@ -12,6 +12,9 @@ export const ROLES = [
   'DIR',
   'LIMIT',
   'OR',
+  'GROUP',
+  'CHART',
+  'AGG',
 ] as const
 export type Role = (typeof ROLES)[number]
 
@@ -43,10 +46,21 @@ export interface Cond {
 }
 
 export type Clause = Cond | { or: Cond[] }
+
+export type ChartKind = 'bar' | 'pie' | 'line' | 'number'
+export type Aggregate = 'count' | 'sum' | 'avg'
+export interface View {
+  chart: ChartKind
+  by: string | null
+  agg: Aggregate
+  of: string | null
+}
+
 export interface Filter {
   where: Clause[]
   sort: { field: string; dir: 'asc' | 'desc' }[]
   limit: number | null
+  view: View | null
 }
 
 export interface TokenResult {

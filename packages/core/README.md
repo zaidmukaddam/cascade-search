@@ -2,7 +2,7 @@
 
 A search bar that knows when it doesn't know.
 
-A 26,947-parameter model that parses search queries in the browser in about a quarter of a millisecond. Every word gets a role and a calibrated confidence, and the roles compile to a typed filter. Zero runtime dependencies, 34.6 KB Brotli with its weights.
+A 27,193-parameter model that parses search queries in the browser in about a quarter of a millisecond. Every word gets a role and a calibrated confidence, and the roles compile to a typed filter. Zero runtime dependencies, 35.6 KB Brotli with its weights.
 
 ```bash
 npm install cascade-search
@@ -27,7 +27,7 @@ result.minConfidence
 result.spans
 ```
 
-`result.ir` is the filter: `{ where, sort, limit }`. `result.spans` lists the words the model is unsure about. When it is empty, the local answer stands.
+`result.ir` is the filter: `{ where, sort, limit, view }`. `view` is `null` for a plain search; "open bugs by status", "pie chart of…", "how many…" or "total points per assignee" fill it with `{ chart: 'bar' | 'pie' | 'line' | 'number', by, agg: 'count' | 'sum' | 'avg', of }`. Drawing it is up to you. `result.spans` lists the words the model is unsure about. When it is empty, the local answer stands.
 
 ## Schemas
 

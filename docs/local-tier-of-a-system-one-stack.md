@@ -47,3 +47,9 @@ The training corpus is synthetic. I wrote the generator, so strong numbers on it
 The model and its weights are 34.6 KB compressed. The same weights run in plain TypeScript for single queries and as one WGSL compute kernel for batches, and a test checks that PyTorch, TypeScript and WGSL agree to within a thousandth on every logit.
 
 The code, the evaluation scripts and the demo are in the repository. Drag the threshold in the demo and watch a query flip from local to Jev. That is the whole idea.
+
+## Update, v0.2: the search bar draws charts
+
+The figures above are from v0.1. Version 0.2 adds three roles, for grouping ("by", "per"), chart kinds ("pie", "line") and aggregates ("how many", "total"), so "pie chart of open bugs by priority" compiles to the same filter plus a view. It is the same bet: the ambiguous word is "by", which is an author in "closed by sam" and a grouping in "bugs by status", and that is exactly the word that comes back unsure.
+
+Adding roles first cost accuracy on ordinary filters, 93.5% to 91.7%, and the reason was not the new roles. Filler like "that" and "than" sits one typo away from the cuisine "thai", the fuzzy matcher flagged it, and a model with slightly less capacity to spare started believing the flag. The fix was in the featurizer, not the model: a word in the closed-class lexicon is a real word, never a typo. With that, the transfer set went to 94.4% with chart queries included, and the share of words that must escalate to reach 99.5% fell from 1.23% to 0.60%. The current numbers are in the README.

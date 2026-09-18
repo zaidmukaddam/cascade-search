@@ -1,6 +1,6 @@
 {
   "name": "cascade-search",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A 27K-parameter in-browser query parser that knows when it doesn't know.",
   "keywords": [
     "search",

@@ -1,7 +1,7 @@
 import fc from 'fast-check'
 import { expect, test } from 'vitest'
 import { parseFilter, pretty } from '../src/ir.ts'
-import type { Cond, Filter, Op } from '../src/types.ts'
+import type { Aggregate, ChartKind, Cond, Filter, Op } from '../src/types.ts'
 
 const field = fc.stringMatching(/^[a-z_][a-z0-9_-]{0,8}$/)
 const cond: fc.Arbitrary<Cond> = fc
@@ -29,6 +29,15 @@ const filter: fc.Arbitrary<Filter> = fc.record({
     maxLength: 2,
   }),
   limit: fc.oneof(fc.constant(null), fc.nat(1000)),
+  view: fc.oneof(
+    fc.constant(null),
+    fc.record({
+      chart: fc.constantFrom<ChartKind>('bar', 'pie', 'line', 'number'),
+      by: fc.oneof(fc.constant(null), field),
+      agg: fc.constantFrom<Aggregate>('count', 'sum', 'avg'),
+      of: fc.oneof(fc.constant(null), field),
+    }),
+  ),
 })
 
 test('round trip: IR -> pretty string -> parse -> IR', () => {
@@ -56,8 +65,9 @@ test('pretty form is readable', () => {
       ],
       sort: [{ field: 'points', dir: 'desc' }],
       limit: 10,
+      view: { chart: 'pie', by: 'assignee', agg: 'sum', of: 'points' },
     }),
   ).toBe(
-    'status:open -author:@me (type:bug OR type:chore) created>="last week" @sort:-points @limit:10',
+    'status:open -author:@me (type:bug OR type:chore) created>="last week" @sort:-points @limit:10 @chart:pie @by:assignee @agg:sum:points',
   )
 })

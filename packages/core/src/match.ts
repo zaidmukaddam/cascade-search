@@ -1,7 +1,9 @@
+import { closedClassWords } from './lexicon.ts'
 import type { Field, Schema } from './types.ts'
 
 const MIN_LENGTH_FOR_STEMMING = 4
 const MIN_LENGTH_FOR_TYPOS = 4
+const CLOSED_CLASS = closedClassWords()
 
 export type TermType = 'field' | 'value' | 'adj' | 'entity'
 
@@ -86,7 +88,7 @@ export function matchToken(token: string, schema: Schema): Hit[] {
 
   const exact = terms.filter(term => term.term === word)
   if (exact.length) return exact.map(term => toHit(term, false))
-  if (word.length < MIN_LENGTH_FOR_TYPOS) return []
+  if (word.length < MIN_LENGTH_FOR_TYPOS || CLOSED_CLASS.has(token.toLowerCase())) return []
 
   return terms
     .filter(term => term.term.length >= MIN_LENGTH_FOR_TYPOS && oneEdit(term.term, word))

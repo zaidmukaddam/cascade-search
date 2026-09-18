@@ -1,6 +1,6 @@
 {
   "name": "cascade-search-jev",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Escalation client for cascade-search: asks Jev (TypeSafe System One) through Vercel AI Gateway.",
   "keywords": [
     "cascade-search",

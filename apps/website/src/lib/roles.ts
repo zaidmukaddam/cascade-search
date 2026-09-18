@@ -20,6 +20,9 @@ const ROLE_STYLE: Record<Role, RoleStyle> = {
   DIR: { name: 'direction', color: 'gray' },
   LIMIT: { name: 'limit', color: 'gray' },
   OR: { name: 'or', color: 'gray' },
+  GROUP: { name: 'group by', color: 'orange' },
+  CHART: { name: 'chart', color: 'orange' },
+  AGG: { name: 'aggregate', color: 'orange' },
 }
 
 export function roleStyle(role: Role): RoleStyle {
